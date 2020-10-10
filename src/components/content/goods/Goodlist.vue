@@ -1,7 +1,7 @@
 <template>
   <div :class="$style.goodslist">
     <GoodlistItem v-for="(item, index) in goods" :key="index" 
-                  :goodsItem="item"/>
+                  :product="item"/>
   </div>
 </template>
 <script>
