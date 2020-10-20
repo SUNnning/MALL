@@ -1,8 +1,8 @@
 <template>
   <div :class="$style.navbar">
-    <slot name="left"></slot>
-    <slot name="center"></slot>
-    <slot name="right"></slot>
+    <div :class="$style.left"><slot name="left"></slot></div>
+    <div :class="$style.center"><slot name="center"></slot></div>
+    <div :class="$style.right"><slot name="right"></slot></div>
   </div>
 </template>
 
@@ -13,7 +13,19 @@ export default {
 </script>
 
 <style module>
-.navbar{
-  display: flex;
-}
+.navbar {
+    display: flex;
+    height: 44px;
+    line-height: 44px;
+    text-align: center;
+    box-shadow: 0 1px 1px rgba(100,100,100,.1);
+  }
+
+  .left, .right {
+    width: 60px;
+  }
+
+  .center {
+    flex: 1;
+  }
 </style>

@@ -1,51 +1,95 @@
 <template>
   <div :id="$style.detail">
-    <nav-bar>
-      <div slot="left" :class="$style.back" @click="backTo">
-        <img src="~assets/img/common/back.svg" alt="">
-      </div>
-      <tab-control slot="center" 
-                  :titles="titles"
-                  :class="$style.nav">
-      </tab-control>
-    </nav-bar>
+    <detail-nav-bar :class="$style.nav"/>
+    <scroll :class="$style.content"
+            :probeType="3"
+            :pullUpLoad="true">
+      <detail-swiper :banners="banners"/>
+      <detail-base-info :product="product"/>
+      <detail-shop-info :shop="shop"/>
+      <detail-product-info :detailInfo="detailInfo"/>
+      <detail-param-info :paramInfo="paramInfo"/>
+    </scroll>
+    <detail-curt/>
   </div>
 </template>
 <script>
-import NavBar from '../../components/common/navBar/NavBar'
-import TabControl from '../../components/content/tabControl/TabControl'
+import Scroll from '../../components/common/scroll/Scroll'
+import DetailNavBar from './childComps/DetailNavBar'
+import DetailSwiper from './childComps/DetailSwiper'
+import DetailBaseInfo from './childComps/DetailBaseInfo'
+import DetailProductInfo from './childComps/DetailProductInfo'
+import DetailShopInfo from './childComps/DetailShopInfo'
+import DetailParamInfo from './childComps/DetailParamInfo'
+import DetailCurt from './childComps/DetailCurt'
+
+import { getDetailData, Goods, Shop, GoodsParam} from '../../network/detail'
+
 export default {
   name: 'Detail',
   data(){
     return {
-      titles: ['商家', '参数', '评价', '推荐']
+      id: null,
+      product: {},
+      shop: {},
+      detailInfo: {},
+      paramInfo: {},
+      recommends: {},
+      banners: []
     }
   },
   components:{
-    NavBar,
-    TabControl,
+    Scroll,
+    DetailNavBar,
+    DetailSwiper,
+    DetailBaseInfo,
+    DetailProductInfo,
+    DetailShopInfo,
+    DetailParamInfo,
+    DetailCurt
   },
   methods: {
-    backTo(){
-      this.$router.back()
-    }
-  }
+    
+  },
+  created() {
+    this.id = this.$route.query.id;
+    getDetailData(this.id).then(res => {
+      console.log(res)
+      let data = res.result;
+      
+      this.banners = data.itemInfo.topImages;
+
+      this.product = new Goods(data.itemInfo, data.columns, data.shopInfo.services);
+
+      this.shop = new Shop(data.shopInfo);
+
+      this.detailInfo = data.detailInfo;
+
+      this.paramInfo = new GoodsParam(data.itemParams.info, data.itemParams.rule);
+    })
+  },
 }
 </script>
 <style module>
 #detail{
   position: relative;
-  z-index: 19;
+  z-index: 9;
   background-color: #fff;
   font-size: 13px;
-}
-.back{
-  flex: 1;
-  text-align: center;
-  padding: 12px 0 0 0;
+  height: 100vh;
 }
 .nav{
-  flex: 4;
-  padding: 0 10px;
+  position: relative;
+  z-index: 1;
+  background-color: #fff;
+}
+.content{
+  /* height: calc(100vh - 102px); */
+  position: absolute;
+  top: 44px;
+  left: 0;
+  right: 0;
+  bottom: 58px;
+  overflow: hidden;
 }
 </style>

@@ -47,6 +47,6 @@ export default {
   }
   .active span{
     padding: 5px 10px;
-    border-bottom: 1px solid blueviolet;
+    border-bottom: 1px solid rgb(138, 43, 226);
   }
 </style>

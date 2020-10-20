@@ -1,6 +1,6 @@
 <template>
-  <div :class="$style.wrapper" ref="wrapper">
-    <div :class="$style.content">
+  <div ref="wrapper">
+    <div>
       <slot></slot>
     </div>
   </div>
@@ -34,7 +34,6 @@ export default {
     },
     refresh(){
       this.scroll && this.scroll.refresh();
-      console.log("refresh")
     }
   },
   mounted() {
@@ -55,7 +54,4 @@ export default {
 }
 </script>
 <style module>
-  /* .wrapper{
-
-  } */
 </style>

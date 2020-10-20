@@ -6,57 +6,21 @@
                 :class="$style.hideBar"
                 ref="tabControl1"/>
 
-    <scroll :class="$style.content" ref="scroll" 
+    <scroll :class="$style.content" 
+            ref="scroll" 
             :probeType="3"
             :pullUpLoad="true"
             @scroll="contentScroll"
             @pullUpdate="loadMore">
-      <ul >
-      <li>h</li>
-      <li>h</li>
-      <li>h</li>
-      <li>h</li>
-      <li>h</li>
-      <li>h</li>
-      <li>h</li>
-      <li>h</li>
-      <li>h</li>
-      <li>h</li>
-      <li>h</li>
-      <li>h</li>
-      <li>h</li>
-      <li>h</li>
-      <li>h</li>
-      <li>h</li>
-      <li>h</li>
-      <li>h</li>
-      <li>h</li>
-      <li>h</li>
-      <li>h</li>
-      <li>h</li>
-      <li>h</li>
-      <li>h</li>
-      <li>h</li>
-      <li>h</li>
-      <li>h</li>
-      <li>h</li>
-      <li>h</li>
-      <li>h</li>
-      <li>h</li>
-      <li>h</li>
-      <li>h</li>
-      <li>h</li>
-      <li>h</li>
-      <li>h</li>
-      <li>h</li>
-      <li>h</li>
-      <li>h</li>
-      <li>h</li>
-    </ul>
+      <home-nav-bar/>
+      <home-swiper :banners="banner" @swiperImageLoad="imgLoad"/>
+      <recommend-view :recommends="recommends"/>
+      <feature-view/>
       <tab-control :titles="['流行', '推荐', '精选']" 
                 @tabClick="tabClick"
                 ref="tabControl2"/>
       <goodlist :goods="showType"/>
+
     </scroll> 
 
     <back-top @click.native="backTop" v-show="showBack"/>
@@ -64,13 +28,19 @@
 </template>
 
 <script>
-import TabControl from '../../components/content/tabControl/TabControl'
-import Goodlist from '../../components/content/goods/Goodlist'
-import Scroll from '../../components/common/scroll/Scroll'
-import BackTop from '../../components/content/backTop/BackTop'
 
-import {getHomeGoods} from '../../network/home.js'
+import TabControl from 'components/content/tabControl/TabControl'
+import Goodlist from 'components/content/goods/Goodlist'
+import Scroll from 'components/common/scroll/Scroll'
+import BackTop from 'components/content/backTop/BackTop'
+import HomeNavBar from './childComps/HomeNavBar'
+import FeatureView from './childComps/FeatureView'
+import HomeSwiper from './childComps/HomeSwiper'
+import RecommendView from './childComps/RecommendView'
+
+import {getHomeMultidata, getHomeGoods} from '../../network/home'
 import {debounce} from '../../common/util.js'
+
 export default {
   name: 'Home',
   data(){
@@ -83,14 +53,21 @@ export default {
       currentType: 'pop',
       offSetTop: null,
       showTabCrl: false,
-      showBack: false
+      showBack: false,
+      recommends:[],
+      banner: [],
+      backY: null
     }
   },
   components: {
     TabControl,
     Goodlist,
     Scroll,
-    BackTop
+    HomeNavBar,
+    BackTop,
+    FeatureView,
+    HomeSwiper,
+    RecommendView
   },
   methods: {
     /**
@@ -98,17 +75,27 @@ export default {
      */
     // 封装一层，created中只写逻辑
     // 封装请求数据方法
+    getHomeMultidata(){
+      getHomeMultidata().then(res => {
+        const data = res.data;
+        this.banner = data.banner.list
+        this.recommends = data.recommend.list
+      })
+    },
     getHomeGoods(type) {
       const page = this.goods[type].page + 1;
-      getHomeGoods(type, page).then(res=>{
-        this.goods[type].list.push(...res.data.data.list);
+      getHomeGoods(type, page).then(res => {
+        this.goods[type].list.push(...res.data.list);
         this.goods[type].page += 1
       })
     },
-
      /**
      * 事件监听相关
      */
+    // 准确获取tabbar位置
+    imgLoad(){
+      this.offSetTop = this.$refs.tabControl2.$el.offsetTop;
+    },
     tabClick(index){
       switch(index){
         case 0:
@@ -133,6 +120,8 @@ export default {
     contentScroll(position){
       this.showTabCrl = (-position.y) > this.offSetTop
       this.showBack = (-position.y) > 1000;
+      console.log(this.$refs.scroll.scroll)
+      console.log(position.y)
     },
     // 上拉加载更多
     loadMore(){
@@ -147,6 +136,8 @@ export default {
     },
   },
   created(){
+    // 请求banner数据
+    this.getHomeMultidata();
     // 请求分类数据
     this.getHomeGoods('pop');
     this.getHomeGoods('new');
@@ -158,13 +149,18 @@ export default {
     const refresh = debounce(this.$refs.scroll.refresh, 200)
     this.$bus.$on("productImgLoad", ()=>{
       refresh()
-    });
-    // 如果有轮播图的话 监听轮播图 this.emit() methods里监听
-    this.offSetTop = this.$refs.tabControl2.$el.offsetTop
+    })
   },
-  destroyed() {
-    console.log("----")
+  activated() {
+    if(!this.backY){
+      console.log(this.backY)
+      this.$refs.scroll.scrollTo(0, this.backY, 0);
+    }
   },
+  deactivated() {
+    console.log(this.$refs.scroll.scroll)
+    this.backY = this.$refs.scroll.scroll.y
+  }
 }
 </script>
 

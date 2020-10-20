@@ -51,7 +51,7 @@ export default {
   height: 49px;
   text-align: center;
   font-size: 14px;
-  background-color: blueviolet;
+  background-color: rgba(138, 43, 226, .8);
 }
 .tabbaritem img{
   width: 24px;
