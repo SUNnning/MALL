@@ -29,8 +29,7 @@
 		name: "DetailCurt",
     methods: {
       addToCart() {
-        console.log("hehehhehee")
-        // this.$emit('addToCart')
+        this.$emit('addToCart')
       }
     }
 	}

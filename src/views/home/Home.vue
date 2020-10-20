@@ -120,8 +120,6 @@ export default {
     contentScroll(position){
       this.showTabCrl = (-position.y) > this.offSetTop
       this.showBack = (-position.y) > 1000;
-      console.log(this.$refs.scroll.scroll)
-      console.log(position.y)
     },
     // 上拉加载更多
     loadMore(){

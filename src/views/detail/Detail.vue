@@ -10,7 +10,7 @@
       <detail-product-info :detailInfo="detailInfo"/>
       <detail-param-info :paramInfo="paramInfo"/>
     </scroll>
-    <detail-curt/>
+    <detail-curt @addToCart="addToCart"/>
   </div>
 </template>
 <script>
@@ -49,7 +49,9 @@ export default {
     DetailCurt
   },
   methods: {
-    
+    addToCart(){
+      this.$store.commit('addToCurt', this.product)
+    }
   },
   created() {
     this.id = this.$route.query.id;
