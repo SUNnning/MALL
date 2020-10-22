@@ -23,7 +23,7 @@ import DetailShopInfo from './childComps/DetailShopInfo'
 import DetailParamInfo from './childComps/DetailParamInfo'
 import DetailCurt from './childComps/DetailCurt'
 
-import { getDetailData, Goods, Shop, GoodsParam} from '../../network/detail'
+import { getDetailData, Goods, Shop, GoodsParam } from '../../network/detail'
 
 export default {
   name: 'Detail',

@@ -29,7 +29,9 @@
 		name: "DetailCurt",
     methods: {
       addToCart() {
-        this.$emit('addToCart')
+        this.$emit('addToCart');
+        // this.$toast.show()
+        this.$toast.show('已添加购物车', 1500)
       }
     }
 	}
